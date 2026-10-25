@@ -22,3 +22,11 @@ export const BRAND_LABELS: Record<CardBrand, string> = {
 	MASTERCARD: "Mastercard",
 	AMEX: "American Express",
 };
+
+export function describePaymentMethod(method: PaymentMethod): string {
+	return `${BRAND_LABELS[method.brand]} ending ${method.last4}`;
+}
+
+export function formatExpiry(method: PaymentMethod): string {
+	return `${String(method.expiryMonth).padStart(2, "0")}/${method.expiryYear}`;
+}

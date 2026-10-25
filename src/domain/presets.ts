@@ -1,4 +1,4 @@
-import { type PaymentMethod } from "./paymentMethod";
+import { BRAND_LABELS, type PaymentMethod } from "./paymentMethod";
 
 export type CardPreset = Omit<PaymentMethod, "nickName">;
 
@@ -25,3 +25,8 @@ export const CARD_PRESETS: readonly CardPreset[] = [
 		expiryYear: 2031,
 	},
 ];
+
+export function describePreset(preset: CardPreset): string {
+	const month = String(preset.expiryMonth).padStart(2, "0");
+	return `${BRAND_LABELS[preset.brand]} ending ${preset.last4} (expires ${month}/${preset.expiryYear})`;
+}

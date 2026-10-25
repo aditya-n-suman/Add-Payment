@@ -1,1 +1,10 @@
+@import "tailwindcss";
 
+body {
+	@apply bg-neutral-50 text-neutral-900;
+}
+
+/* App renders the payment card and the mock controls side by side */
+#root {
+	@apply flex flex-wrap items-start gap-8 p-8;
+}
