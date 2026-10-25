@@ -28,6 +28,12 @@ async function fillForm(user: UserEvent, nickName = "Travel") {
 	await user.type(screen.getByLabelText("Nickname"), nickName);
 }
 
+// The saved list has its own status region, so look only inside the add form
+function getAddStatus() {
+	const form = screen.getByRole("form", { name: "Add Payment Method" });
+	return within(form).getByRole("status");
+}
+
 function getAddButton() {
 	return screen.getByRole("button", { name: "Add Payment Method" });
 }
@@ -70,12 +76,16 @@ describe("Payment methods screen", () => {
 		await fillForm(user);
 		await user.click(getAddButton());
 
-		// Pending: status is announced and the button can't be pressed again
-		expect(screen.getByRole("status")).toHaveTextContent("Adding “Travel”…");
-		expect(screen.getByRole("button", { name: "Adding..." })).toBeDisabled();
+		// Pending: status is announced and the button can't be pressed again.
+		// It uses aria-disabled (not disabled) so it keeps keyboard focus.
+		expect(getAddStatus()).toHaveTextContent("Adding “Travel”…");
+		expect(screen.getByRole("button", { name: "Adding..." })).toHaveAttribute(
+			"aria-disabled",
+			"true",
+		);
 
 		await waitFor(() =>
-			expect(screen.getByRole("status")).toHaveTextContent(/Added “Travel”/),
+			expect(getAddStatus()).toHaveTextContent(/Added “Travel”/),
 		);
 		expect(getVisibleMethods()).toHaveLength(3);
 		expect(mockApi.getStoredPaymentMethods()).toHaveLength(3);
@@ -118,7 +128,7 @@ describe("Payment methods screen", () => {
 		await user.click(retryButton);
 
 		await waitFor(() =>
-			expect(screen.getByRole("status")).toHaveTextContent(/Added “Travel”/),
+			expect(getAddStatus()).toHaveTextContent(/Added “Travel”/),
 		);
 		expect(mockApi.getStoredPaymentMethods()).toHaveLength(3);
 		expect(getVisibleMethods()).toHaveLength(3);

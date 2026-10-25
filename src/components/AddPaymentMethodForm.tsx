@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { CARD_PRESETS, describePreset } from "../domain/presets";
 import { MAX_NICKNAME_LENGTH } from "../constants";
 import useAddPaymentForm from "../hooks/useAddPaymentForm";
@@ -51,7 +52,7 @@ const AddPaymentMethodForm = () => {
 			} else if (nickName.length > MAX_NICKNAME_LENGTH) {
 				errors.nickName = `Nickname must be ${MAX_NICKNAME_LENGTH} characters or less.`;
 			}
-			setValidationErrors(errors);
+			flushSync(() => setValidationErrors(errors));
 			return errors;
 		},
 		[],
@@ -100,9 +101,10 @@ const AddPaymentMethodForm = () => {
 			className="mt-8"
 			noValidate
 		>
-			<h2 id="add-heading" className="mb-5 text-2xl font-semibold">
+			<h2 id="add-heading" className="mb-2 text-2xl font-semibold">
 				Add Payment Method
 			</h2>
+			<p className="mb-5 text-sm text-neutral-600">All fields are required.</p>
 			<fieldset disabled={isLocked} className="flex flex-col">
 				<legend className="sr-only">Enter your card details:</legend>
 				<div className="field mb-4 flex flex-col">
@@ -110,12 +112,15 @@ const AddPaymentMethodForm = () => {
 						Card
 					</label>
 					<select
-						className={`bg-neutral-100 rounded border px-3 py-1.5 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:border-dashed disabled:bg-neutral-100 disabled:text-neutral-500 ${validationErrors.presetId ? "border-red-700" : "border-neutral-500"}`}
+						className={`bg-neutral-100 rounded border px-3 py-1.5 disabled:border-dashed disabled:bg-neutral-100 disabled:text-neutral-500 ${validationErrors.presetId ? "border-red-700" : "border-neutral-500"}`}
 						id="preset"
 						value={selectedPreset}
 						onChange={presetSelectionHandler}
 						required
-						aria-required="true"
+						aria-invalid={Boolean(validationErrors.presetId)}
+						aria-describedby={
+							validationErrors.presetId ? "preset-error" : undefined
+						}
 						ref={presetRef}
 					>
 						<option value="">-- Select a card --</option>
@@ -126,46 +131,46 @@ const AddPaymentMethodForm = () => {
 						))}
 					</select>
 					{validationErrors.presetId && (
-						<span
-							role="alert"
-							id="preset-error"
-							className="mt-1 text-sm text-red-700"
-							aria-live="assertive"
-						>
+						<span id="preset-error" className="mt-1 text-sm text-red-700">
 							{validationErrors.presetId}
 						</span>
 					)}
 				</div>
-				<label htmlFor="nickname" className="mb-1 font-semibold">
-					Nickname
-				</label>
-				<input
-					className={`rounded border px-3 py-1.5 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:border-dashed disabled:bg-neutral-100 disabled:text-neutral-500 ${validationErrors.nickName ? "border-red-700" : "border-neutral-500"}`}
-					id="nickname"
-					type="text"
-					value={nickname}
-					onChange={nicknameChangeHandler}
-					required
-					aria-required="true"
-					ref={nicknameRef}
-					autoComplete="nickname"
-				/>
-				{validationErrors.nickName && (
-					<span
-						role="alert"
-						id="nickname-error"
-						className="mt-1 text-sm text-red-700"
-						aria-live="assertive"
-					>
-						{validationErrors.nickName}
-					</span>
-				)}
+				<div className="field flex flex-col">
+					<label htmlFor="nickname" className="mb-1 font-semibold">
+						Nickname
+					</label>
+					<p id="nickname-hint" className="mb-1 text-sm text-neutral-600">
+						Up to {MAX_NICKNAME_LENGTH} characters.
+					</p>
+					<input
+						className={`rounded border px-3 py-1.5 disabled:border-dashed disabled:bg-neutral-100 disabled:text-neutral-500 ${validationErrors.nickName ? "border-red-700" : "border-neutral-500"}`}
+						id="nickname"
+						type="text"
+						value={nickname}
+						onChange={nicknameChangeHandler}
+						required
+						aria-invalid={Boolean(validationErrors.nickName)}
+						aria-describedby={
+							validationErrors.nickName
+								? "nickname-hint nickname-error"
+								: "nickname-hint"
+						}
+						ref={nicknameRef}
+						autoComplete="off"
+					/>
+					{validationErrors.nickName && (
+						<span id="nickname-error" className="mt-1 text-sm text-red-700">
+							{validationErrors.nickName}
+						</span>
+					)}
+				</div>
 			</fieldset>
 			<button
 				ref={buttonRef}
 				type="submit"
 				aria-disabled={isPending}
-				className="mt-6 rounded-md bg-neutral-900 px-4 py-2 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.6_0.2_250)] disabled:bg-neutral-500"
+				className="mt-6 rounded-md bg-neutral-900 px-4 py-2 text-white aria-disabled:cursor-not-allowed aria-disabled:bg-neutral-500"
 			>
 				{buttonLabel(state)}
 			</button>

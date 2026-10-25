@@ -20,7 +20,7 @@ const MockControls = ({ api }: MockControlsProps) => {
 	return (
 		<aside
 			aria-labelledby="mock-controls-heading"
-			className="w-88 rounded-md border border-dashed border-neutral-300 bg-white px-6 py-8 text-sm"
+			className="w-full max-w-88 rounded-md border border-dashed border-neutral-300 bg-white px-6 py-8 text-sm"
 		>
 			<h2 id="mock-controls-heading" className="mb-4 text-xl font-semibold">
 				Mock API Controls
@@ -45,15 +45,15 @@ const MockControls = ({ api }: MockControlsProps) => {
 				))}
 			</fieldset>
 			<p className="mt-4 text-neutral-600">
-				Reload with{" "}
+				To test the first load, reload with an{" "}
 				<a className="text-blue-700 underline" href="?scenario=empty_response">
-					?scenario=empty-response
+					empty list
 				</a>{" "}
-				for the empty state, or{" "}
+				or a{" "}
 				<a className="text-blue-700 underline" href="?scenario=query_failure">
-					?scenario=query-failure
-				</a>{" "}
-				to fail the first load.
+					failed first load
+				</a>
+				.
 			</p>
 		</aside>
 	);
