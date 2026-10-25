@@ -12,9 +12,9 @@ interface AppProps {
 const App = ({ client, api }: AppProps) => {
 	return (
 		<ApolloProvider client={client}>
-			<div className="w-full max-w-160">
+			<main className="w-full max-w-160">
 				<PaymentDetails />
-			</div>
+			</main>
 			<MockControls api={api} />
 		</ApolloProvider>
 	);

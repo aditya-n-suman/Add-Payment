@@ -1,3 +1,4 @@
+import AddPaymentMethodForm from "./AddPaymentMethodForm";
 import PaymentMethodList from "./PaymentMethodList";
 
 const PaymentDetails = () => {
@@ -10,6 +11,7 @@ const PaymentDetails = () => {
 				Payment Methods
 			</h1>
 			<PaymentMethodList />
+			<AddPaymentMethodForm />
 		</section>
 	);
 };
