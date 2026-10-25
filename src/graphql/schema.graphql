@@ -1,0 +1,30 @@
+enum CardBrand {
+	VISA
+	MASTERCARD
+	AMEX
+}
+
+type PaymentMethod {
+	id: ID!
+	brand: CardBrand!
+	last4: String!
+	expiryMonth: Int!
+	expiryYear: Int!
+	nickName: String!
+}
+
+input AddPaymentMethodInput {
+	presetId: ID!
+	nickName: String!
+}
+
+type Query {
+	paymentMethods: [PaymentMethod!]!
+}
+
+type Mutation {
+	addPaymentMethod(
+		idempotencyKey: ID!
+		input: AddPaymentMethodInput!
+	): PaymentMethod!
+}
